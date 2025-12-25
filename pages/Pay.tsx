@@ -23,6 +23,12 @@ const Pay = () => {
     e.preventDefault();
     if (!user || !profile) return;
     
+    // Validation
+    if (!upiId.trim().endsWith('@swiftpay')) {
+       setStatus({ type: 'error', msg: 'Invalid UPI ID. Must end with @swiftpay' });
+       return;
+    }
+
     if (parseFloat(amount) > profile.balance) {
        setStatus({ type: 'error', msg: 'Insufficient balance' });
        return;
@@ -32,7 +38,7 @@ const Pay = () => {
     setStatus({ type: null, msg: '' });
 
     try {
-      const result = await sendMoney(user.uid, upiId, parseFloat(amount));
+      const result = await sendMoney(user.uid, upiId.trim(), parseFloat(amount));
       if (result.success) {
         setStatus({ type: 'success', msg: result.message });
         await refreshProfile();
@@ -125,13 +131,17 @@ const Pay = () => {
                 <input
                   type="text"
                   value={upiId}
-                  onChange={(e) => setUpiId(e.target.value)}
+                  onChange={(e) => {
+                    setUpiId(e.target.value);
+                    if (status.msg.includes('Invalid UPI ID')) setStatus({ type: null, msg: '' });
+                  }}
                   placeholder="username@swiftpay"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border ${status.msg.includes('Invalid UPI ID') ? 'border-red-500 bg-red-50' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all`}
                   required
                 />
                 <Search className="absolute left-3 top-3.5 text-gray-400" size={20} />
               </div>
+              <p className="text-xs text-gray-400 mt-1">Must end with @swiftpay</p>
             </div>
 
             <div>
