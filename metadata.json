@@ -1,0 +1,7 @@
+{
+  "name": "SwiftPay UPI",
+  "description": "A high-performance, real-time UPI-like payment application built with Firebase. Features instant transfers, QR code generation, daily interest accrual, and a comprehensive admin panel.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
